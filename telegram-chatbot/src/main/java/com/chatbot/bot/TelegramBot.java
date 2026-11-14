@@ -10,11 +10,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
     private final String botName;
-    Assistant assistant;
+    private final Assistant assistant;
 
-    public TelegramBot(String botName, String botToken) {
+    public TelegramBot(String botName, String botToken, Assistant assistant) {
         super(botToken);
         this.botName = botName;
+        this.assistant = assistant;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             var message = update.getMessage();
             var chatId = message.getChatId();
             log.info("Message received: {}", message.getText());
-            String response = assistant.chat(Math.toIntExact(chatId), message.getText());
+            String response = assistant.chat(chatId, message.getText());
             try {
                 execute(new SendMessage(chatId.toString(), response));
             } catch (TelegramApiException e) {

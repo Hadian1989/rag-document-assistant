@@ -5,7 +5,7 @@ import com.chatbot.model.BookModel;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,7 @@ import java.util.List;
 public class GenAIServiceImp implements GenAIService {
 
     private final Assistant assistant;
+    private final ChatLanguageModel chatLanguageModel;
 
     @Override
     public String getResponse(ChatRequest request, Integer userId) {
@@ -34,10 +35,6 @@ public class GenAIServiceImp implements GenAIService {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(SystemMessage.systemMessage("Respond in French"));
         messages.add(UserMessage.userMessage(request.question()));
-        var model = OpenAiChatModel.builder()
-                .apiKey("demo")
-                .modelName("gpt-4o-mini")
-                .build();
-        return model.generate(messages).content().text();
+        return chatLanguageModel.generate(messages).content().text();
     }
 }
