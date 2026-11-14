@@ -3,6 +3,8 @@ package com.chatbot.config;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,16 @@ public class RagConfig {
                 .table("embeddings")
                 .dimension(1536)
                 .createTable(true)
+                .build();
+    }
+
+    @Bean
+    ContentRetriever contentRetriever(EmbeddingStore<TextSegment> store, EmbeddingModel model) {
+        return EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(store)
+                .embeddingModel(model)
+                .maxResults(5)
+                .minScore(0.6)
                 .build();
     }
 }
