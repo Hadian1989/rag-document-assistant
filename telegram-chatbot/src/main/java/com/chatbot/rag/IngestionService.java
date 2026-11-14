@@ -23,7 +23,7 @@ public class IngestionService {
 
     public void ingestFolder(Path folder) throws IOException {
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .documentSplitter(DocumentSplitters.recursive(500, 50))
+                .documentSplitter(DocumentSplitters.recursive(1000, 100))
                 .embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
                 .build();

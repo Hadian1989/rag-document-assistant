@@ -29,6 +29,7 @@ public class AIConfig {
                 .modelName("gpt-4o-mini")
                 .logRequests(true)
                 .logResponses(true)
+                .temperature(0.0)
                 .build();
     }
 

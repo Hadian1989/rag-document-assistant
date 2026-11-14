@@ -2,11 +2,14 @@ package com.chatbot.bot;
 
 import com.chatbot.service.Assistant;
 import com.chatbot.service.DocAssistant;
+import dev.langchain4j.service.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
@@ -31,7 +34,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             var chatId = message.getChatId();
             log.info("Message received: {}", message.getText());
             if (text.startsWith("/ask ")) {
-                response = docAssistant.chat(chatId, text.substring(5));
+                Result<String> result = docAssistant.chat(chatId, text.substring(5));
+                String sources = result.sources().stream()
+                        .map(c -> c.textSegment().metadata())
+                        .map(m -> m.getString("file_name") + ", S. " + m.getInteger("page"))
+                        .distinct()
+                        .collect(Collectors.joining("; "));
+                response = result.content();
+                if (!sources.isBlank() && !response.contains("nicht in meinen Dokumenten")) {
+                    response += "\n\n Quelle: " + sources;
+                }
             } else {
                 response = assistant.chat(chatId, message.getText());
             }
