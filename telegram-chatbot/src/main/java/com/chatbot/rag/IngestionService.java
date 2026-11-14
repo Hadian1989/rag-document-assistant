@@ -7,11 +7,13 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -20,6 +22,16 @@ public class IngestionService {
     private final EmbeddingModel embeddingModel;
     private final EmbeddingStore<TextSegment> embeddingStore;
     private final PdfPageLoader pdfPageLoader;
+    @Value("${rag.docs-folder}")
+    private String docsFolder;
+
+    public List<String> listDocuments() throws IOException {
+        try (var files = Files.list(Path.of(docsFolder))) {
+            return files.map(p -> p.getFileName().toString())
+                    .filter(name -> name.endsWith(".pdf"))
+                    .toList();
+        }
+    }
 
     public void ingestFolder(Path folder) throws IOException {
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
@@ -34,5 +46,10 @@ public class IngestionService {
                 log.info("Ingested {}", pdf.getFileName());
             }
         }
+    }
+
+    public void reindex() throws IOException {
+        embeddingStore.removeAll();
+        ingestFolder(Path.of(docsFolder));
     }
 }
