@@ -3,6 +3,7 @@ package com.chatbot.config;
 import com.chatbot.bot.TelegramBot;
 import com.chatbot.rag.IngestionService;
 import com.chatbot.service.Assistant;
+import com.chatbot.service.DeadlineExtractor;
 import com.chatbot.service.DocAssistant;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,9 @@ public class TelegramConfig {
                                    @Value("${bot.token}") String botToken,
                                    @Value("${bot.admin-chat-id}") Long adminChatId,
                                    Assistant assistant, DocAssistant docAssistant,
-                                   IngestionService ingestionService) {
-        TelegramBot telegramBot = new TelegramBot(botName, botToken, adminChatId, assistant, docAssistant, ingestionService);
+                                   IngestionService ingestionService,
+                                   DeadlineExtractor deadlineExtractor) {
+        TelegramBot telegramBot = new TelegramBot(botName, botToken, adminChatId, assistant, docAssistant, ingestionService, deadlineExtractor);
         try {
             var telegramBotApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotApi.registerBot(telegramBot);

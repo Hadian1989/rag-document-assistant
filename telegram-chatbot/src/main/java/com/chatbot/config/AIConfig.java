@@ -1,6 +1,7 @@
 package com.chatbot.config;
 
 import com.chatbot.service.Assistant;
+import com.chatbot.service.DeadlineExtractor;
 import com.chatbot.service.DocAssistant;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -40,6 +41,14 @@ public class AIConfig {
                 .chatLanguageModel(chatLanguageModel)
                 .contentRetriever(contentRetriever)
                 .chatMemoryProvider(chatId -> MessageWindowChatMemory.withMaxMessages(10))
+                .build();
+    }
+
+    @Bean
+    public DeadlineExtractor deadlineExtractor(ChatLanguageModel chatLanguageModel, ContentRetriever contentRetriever) {
+        return AiServices.builder(DeadlineExtractor.class)
+                .chatLanguageModel(chatLanguageModel)
+                .contentRetriever(contentRetriever)
                 .build();
     }
 }
