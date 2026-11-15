@@ -25,6 +25,12 @@ public class IngestionService {
     @Value("${rag.docs-folder}")
     private String docsFolder;
 
+    @Value("${rag.chunk-size}")
+    private int chunkSize;
+
+    @Value("${rag.chunk-overlap}")
+    private int chunkOverlap;
+
     public List<String> listDocuments() throws IOException {
         try (var files = Files.list(Path.of(docsFolder))) {
             return files.map(p -> p.getFileName().toString())
@@ -35,8 +41,7 @@ public class IngestionService {
 
     public void ingestFolder(Path folder) throws IOException {
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .documentSplitter(DocumentSplitters.recursive(1000, 100))
-                .embeddingModel(embeddingModel)
+                .documentSplitter(DocumentSplitters.recursive(chunkSize, chunkOverlap)).embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
                 .build();
 

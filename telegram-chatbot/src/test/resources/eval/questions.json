@@ -1,0 +1,114 @@
+[
+    {
+      "question": "When is the Applied Embedded Systems exam?",
+      "mustContain": ["20"],
+      "expectedFile": "ESE exam schedule summerterm 2026.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "Wer prüft Mechatronic Systems Engineering und in welchem Raum findet die Prüfung statt?",
+      "mustContain": ["Henkler", "A.E.01"],
+      "expectedFile": "ESE exam schedule summerterm 2026.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "How long is the R&D Project Management exam in minutes?",
+      "mustContain": ["60"],
+      "expectedFile": "ESE exam schedule summerterm 2026.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "Wer ist der Prüfer der mündlichen Prüfung Microelectronics & HW/SW Co-Design?",
+      "mustContain": ["Schulz"],
+      "expectedFile": "ESE exam schedule summerterm 2026.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "In which room is the Automotive Systems exam?",
+      "mustContain": ["520"],
+      "expectedFile": "ESE exam schedule summerterm 2026.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "Wer unterrichtet Robotic Vision laut Stundenplan?",
+      "mustContain": ["Thiem"],
+      "expectedFile": "ESE class schedule - summer term 2023.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "When was the exam application period in the summer term 2023?",
+      "mustContain": ["31"],
+      "expectedFile": "ESE class schedule - summer term 2023.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "Was bedeutet der Prüfungsstatus ZVF?",
+      "mustContain": ["Zulassungsvoraussetzung"],
+      "expectedFile": "FAQ-Quick Start Exam Registration.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "How is the FH Kennung (username) built?",
+      "mustContain": ["thtes002"],
+      "expectedFile": "HIO First Steps and General Information.pdf",
+      "expectedPage": 1
+    },
+    {
+      "question": "Nach welchem Paragraphen gibt es die Bescheinigung für das BAföG-Amt im Student Service?",
+      "mustContain": ["9"],
+      "expectedFile": "HIO First Steps and General Information.pdf",
+      "expectedPage": 9
+    },
+    {
+      "question": "How many weeks do I have to submit the Master's thesis after registration?",
+      "mustContain": ["26"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 8
+    },
+    {
+      "question": "Um wie viele Wochen kann die Abgabefrist der Masterarbeit verlängert werden?",
+      "mustContain": ["4"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 8
+    },
+    {
+      "question": "How many ECTS do I need to register the Master's thesis in the 4-semester Master's?",
+      "mustContain": ["84"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 7
+    },
+    {
+      "question": "Wie lange dauert das Kolloquium insgesamt?",
+      "mustContain": ["30"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 11
+    },
+    {
+      "question": "Who is the head of the examination board (PAV) for the international Master's programmes?",
+      "mustContain": ["Wolff"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 6
+    },
+    {
+      "question": "Wie viele Seiten sollte eine Masterarbeit ungefähr haben?",
+      "mustContain": ["70", "100"],
+      "expectedFile": "Thesis guideline v07.pdf",
+      "expectedPage": 13
+    },
+    {
+      "question": "Wie hoch ist der Semesterbeitrag an der FH Dortmund?",
+      "mustContain": ["nicht in meinen Dokumenten"]
+    },
+    {
+      "question": "When is the Machine Learning exam in summer term 2026?",
+      "mustContain": ["nicht in meinen Dokumenten"]
+    },
+    {
+      "question": "Wann hat die Mensa an der Emil-Figge-Straße geöffnet?",
+      "mustContain": ["nicht in meinen Dokumenten"]
+    },
+    {
+      "question": "Wer hat die WM 2014 gewonnen?",
+      "mustContain": ["nicht in meinen Dokumenten"]
+    }
+]

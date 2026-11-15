@@ -37,12 +37,13 @@ public class RagConfig {
     }
 
     @Bean
-    ContentRetriever contentRetriever(EmbeddingStore<TextSegment> store, EmbeddingModel model) {
+    ContentRetriever contentRetriever(EmbeddingStore<TextSegment> store, EmbeddingModel model,@Value("${rag.max-results}") int maxResults,
+                                      @Value("${rag.min-score}") double minScore) {
         return EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(store)
                 .embeddingModel(model)
-                .maxResults(5)
-                .minScore(0.6)
+                .maxResults(maxResults)
+                .minScore(minScore)
                 .build();
     }
 }
