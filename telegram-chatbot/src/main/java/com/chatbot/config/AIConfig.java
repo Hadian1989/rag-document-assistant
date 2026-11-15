@@ -3,6 +3,7 @@ package com.chatbot.config;
 import com.chatbot.service.Assistant;
 import com.chatbot.service.DeadlineExtractor;
 import com.chatbot.service.DocAssistant;
+import com.chatbot.tools.DateTools;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -41,6 +42,7 @@ public class AIConfig {
                 .chatLanguageModel(chatLanguageModel)
                 .contentRetriever(contentRetriever)
                 .chatMemoryProvider(chatId -> MessageWindowChatMemory.withMaxMessages(10))
+                .tools(new DateTools())
                 .build();
     }
 

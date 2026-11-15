@@ -98,6 +98,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 response = assistant.chat(chatId, message.getText());
             }
             try {
+                log.info("Sending response: {}", response);
                 execute(new SendMessage(chatId.toString(), response));
             } catch (TelegramApiException e) {
                 log.error("Execution during telegram api: {}", e.getMessage());
