@@ -69,6 +69,8 @@ The eval set has 20 questions: 16 whose answer is in the documents and 4 whose a
 
 ➡️ Chosen setup: **chunk size 1000, overlap 100, maxResults 3**.
 
+> ⚠️ **For local use only.** The REST API has no authentication (see [Known Limitations](#known-limitations)).
+
 ## Getting Started
 
 ### 1. Prerequisites
@@ -165,8 +167,7 @@ rag.min-score=0.6
 
 ## Known Limitations
 
-- 🔓 **No authentication on the REST API**: anyone who can reach it can upload PDFs and cause OpenAI costs.
-- 📑 **Duplicates**: uploading the same file twice stores its chunks twice.
+- 🔓 **No authentication on the REST API**: anyone who can reach it can upload PDFs and cause OpenAI costs. **For local use only.** Do not expose it to the internet.
 - 🖼️ **No OCR**: scanned PDFs cannot be read.
 - 📋 **Tables**: a table that is split across chunks can lead to mixed-up answers (see Evaluation).
 - 🧪 **Simple eval check**: answers are checked with keyword matching. Short numbers like `"20"` can match by accident (for example inside `2026`).
