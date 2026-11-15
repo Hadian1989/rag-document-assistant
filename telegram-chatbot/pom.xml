@@ -29,6 +29,9 @@
 	<properties>
 		<java.version>17</java.version>
 		<langchain4j.version>0.34.0</langchain4j.version>
+		<!-- Eval tests call the real OpenAI API: skip them by default.
+		     Run them with: ./mvnw test -Dgroups=eval -DexcludedGroups= -->
+		<excludedGroups>eval</excludedGroups>
 	</properties>
 	<dependencies>
 		<dependency>
