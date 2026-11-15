@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
@@ -40,14 +42,11 @@ public class IngestionService {
     }
 
     public void ingestFolder(Path folder) throws IOException {
-        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .documentSplitter(DocumentSplitters.recursive(chunkSize, chunkOverlap)).embeddingModel(embeddingModel)
-                .embeddingStore(embeddingStore)
-                .build();
+
 
         try (var files = Files.list(folder)) {
             for (Path pdf : files.filter(p -> p.toString().endsWith(".pdf")).toList()) {
-                ingestor.ingest(pdfPageLoader.loadPages(pdf));
+                ingestor().ingest(pdfPageLoader.loadPages(pdf));
                 log.info("Ingested {}", pdf.getFileName());
             }
         }
@@ -56,5 +55,20 @@ public class IngestionService {
     public void reindex() throws IOException {
         embeddingStore.removeAll();
         ingestFolder(Path.of(docsFolder));
+    }
+
+    private EmbeddingStoreIngestor ingestor() {
+        return EmbeddingStoreIngestor.builder()
+                .documentSplitter(DocumentSplitters.recursive(chunkSize, chunkOverlap))
+                .embeddingModel(embeddingModel)
+                .embeddingStore(embeddingStore)
+                .build();
+    }
+
+    public void addDocument(String fileName, InputStream content) throws IOException {
+        Path target = Path.of(docsFolder).resolve(Path.of(fileName).getFileName());
+        Files.copy(content, target, StandardCopyOption.REPLACE_EXISTING);
+        ingestor().ingest(pdfPageLoader.loadPages(target));
+        log.info("Uploaded and ingested {}", target.getFileName());
     }
 }
