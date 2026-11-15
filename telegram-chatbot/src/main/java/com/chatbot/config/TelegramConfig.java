@@ -2,6 +2,8 @@ package com.chatbot.config;
 
 import com.chatbot.bot.TelegramBot;
 import com.chatbot.rag.IngestionService;
+import com.chatbot.rag.RagAnswer;
+import com.chatbot.rag.RagService;
 import com.chatbot.service.Assistant;
 import com.chatbot.service.DeadlineExtractor;
 import com.chatbot.service.DocAssistant;
@@ -20,10 +22,10 @@ public class TelegramConfig {
     public TelegramBot telegramBot(@Value("${bot.name}") String botName,
                                    @Value("${bot.token}") String botToken,
                                    @Value("${bot.admin-chat-id}") Long adminChatId,
-                                   Assistant assistant, DocAssistant docAssistant,
+                                   Assistant assistant, RagService ragService,
                                    IngestionService ingestionService,
                                    DeadlineExtractor deadlineExtractor) {
-        TelegramBot telegramBot = new TelegramBot(botName, botToken, adminChatId, assistant, docAssistant, ingestionService, deadlineExtractor);
+        TelegramBot telegramBot = new TelegramBot(botName, botToken, adminChatId, assistant, ragService, ingestionService, deadlineExtractor);
         try {
             var telegramBotApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotApi.registerBot(telegramBot);

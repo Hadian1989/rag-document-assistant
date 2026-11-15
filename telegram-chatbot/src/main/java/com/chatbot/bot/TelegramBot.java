@@ -1,6 +1,8 @@
 package com.chatbot.bot;
 
 import com.chatbot.rag.IngestionService;
+import com.chatbot.rag.RagAnswer;
+import com.chatbot.rag.RagService;
 import com.chatbot.service.*;
 import dev.langchain4j.service.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 public class TelegramBot extends TelegramLongPollingBot {
     private final String botName;
     private final Assistant assistant;
-    private final DocAssistant docAssistant;
+    private final RagService ragService;
     private final IngestionService ingestionService;
     private final DeadlineExtractor deadlineExtractor;
     private final Long adminChatId;
@@ -26,14 +28,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(String botName,
                        String botToken,
                        Long adminChatId,
-                       Assistant assistant,
-                       DocAssistant docAssistant,
+                       Assistant assistant, RagService ragService,
                        IngestionService ingestionService,
                        DeadlineExtractor deadlineExtractor) {
         super(botToken);
         this.botName = botName;
         this.assistant = assistant;
-        this.docAssistant = docAssistant;
+        this.ragService = ragService;
         this.ingestionService = ingestionService;
         this.adminChatId = adminChatId;
         this.deadlineExtractor = deadlineExtractor;
@@ -49,15 +50,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             var chatId = message.getChatId();
             log.info("Message received: {}: {}", chatId, text);
             if (text.startsWith("/ask ")) {
-                Result<String> result = docAssistant.chat(chatId, text.substring(5));
-                String sources = result.sources().stream()
-                        .map(c -> c.textSegment().metadata())
-                        .map(m -> m.getString("file_name") + ", S. " + m.getInteger("page"))
-                        .distinct()
-                        .collect(Collectors.joining("; "));
-                response = result.content();
-                if (!sources.isBlank() && !response.contains("nicht in meinen Dokumenten")) {
-                    response += "\n\n Quelle: " + sources;
+                RagAnswer rag = ragService.ask(chatId, text.substring(5));
+                response = rag.answer();
+                if (!rag.sources().isEmpty()) {
+                    response += "\n\n Quelle: " + String.join("; ", rag.sources());
                 }
             } else if (text.startsWith("/docs")) {
                 try {
