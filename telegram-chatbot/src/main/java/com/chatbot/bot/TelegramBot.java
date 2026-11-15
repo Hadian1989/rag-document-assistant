@@ -81,10 +81,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     response = "Keine Fristen gefunden!";
                 } else {
                     response = list.deadlines().stream()
-                            .map(d -> "📅 " + (d.date() != null ? d.date() + ": " : "") + d.title())
-                            .collect(Collectors.joining("\n"));
-
-                    response = list.deadlines().stream()
                             .sorted(Comparator.comparing(Deadline::date, Comparator.nullsLast(Comparator.naturalOrder())))
                             .map(d -> "📅 " + (d.date() != null ? d.date() + ": " : "") + d.title())
                             .collect(Collectors.joining("\n"));

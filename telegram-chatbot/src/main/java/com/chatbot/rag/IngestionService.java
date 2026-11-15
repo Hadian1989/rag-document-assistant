@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -68,6 +70,8 @@ public class IngestionService {
     public void addDocument(String fileName, InputStream content) throws IOException {
         Path target = Path.of(docsFolder).resolve(Path.of(fileName).getFileName());
         Files.copy(content, target, StandardCopyOption.REPLACE_EXISTING);
+        // Remove old chunks of this file first, otherwise a second upload stores them twice
+        embeddingStore.removeAll(metadataKey("file_name").isEqualTo(target.getFileName().toString()));
         ingestor().ingest(pdfPageLoader.loadPages(target));
         log.info("Uploaded and ingested {}", target.getFileName());
     }
