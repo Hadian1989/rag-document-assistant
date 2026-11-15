@@ -2,8 +2,7 @@
 
 A Spring Boot app that answers questions about **your own PDF documents** and gives **the source (file and page)** for each answer. If the answer is not in the documents, it says so instead of making something up.
 
-<!-- TODO: add demo GIF -->
-<!-- ![Demo](docs-assets/demo.gif) -->
+![Demo](docs-assets/demo.gif)
 
 **Example**
 
