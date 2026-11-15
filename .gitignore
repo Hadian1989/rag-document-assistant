@@ -33,6 +33,8 @@ build/
 .vscode/
 # IntelliJ IDEA project files
 **/.idea/
+**/docs/
+logs/
 
 
 null

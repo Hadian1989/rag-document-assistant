@@ -15,7 +15,7 @@ public interface Assistant {
                     If you don't know answer, just tell it.
                     """
     )
-    String chat(@MemoryId int memoryId, @UserMessage String userMessage);
+    String chat(@MemoryId long memoryId, @UserMessage String userMessage);
 
     @SystemMessage("Extract information about a book from {{text}} in json format")
     @UserMessage("And genre should be from this list {{genresList}}")
