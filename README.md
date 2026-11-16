@@ -27,21 +27,21 @@ A Spring Boot app that answers questions about **your own PDF documents** and gi
 ```mermaid
 flowchart LR
     subgraph Ingestion
-        PDF[PDFs in docs/] --> L[PdfPageLoader<br/>page by page]
-        UP[REST upload] --> L
-        L --> S[Splitter<br/>1000 / 100]
-        S --> E[OpenAI Embeddings<br/>text-embedding-3-small]
-        E --> DB[(PostgreSQL<br/>+ pgvector)]
+        PDF["PDFs in docs/"] --> L["PdfPageLoader<br/>page by page"]
+        UP["REST upload"] --> L
+        L --> S["Splitter<br/>1000 / 100"]
+        S --> E["OpenAI Embeddings<br/>text-embedding-3-small"]
+        E --> DB[("PostgreSQL<br/>+ pgvector")]
     end
 
     subgraph Question
-        U[Telegram / REST] --> RS[RagService]
-        RS --> DA[DocAssistant<br/>LangChain4j AI Service]
-        DA --> R[ContentRetriever<br/>top 3 chunks]
+        U["Telegram / REST"] --> RS["RagService"]
+        RS --> DA["DocAssistant<br/>LangChain4j AI Service"]
+        DA --> R["ContentRetriever<br/>top 3 chunks"]
         R --> DB
-        DA --> LLM[OpenAI gpt-4o-mini]
-        LLM <--> T[DateTools<br/>@Tool]
-        LLM --> A[Answer + sources]
+        DA --> LLM["OpenAI gpt-4o-mini"]
+        LLM <--> T["DateTools<br/>@Tool"]
+        LLM --> A["Answer + sources"]
     end
 ```
 
