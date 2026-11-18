@@ -35,5 +35,6 @@ build/
 **/.idea/
 **/docs/
 logs/
+**/roadmap/
 
 
