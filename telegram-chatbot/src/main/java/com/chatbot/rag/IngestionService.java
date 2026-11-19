@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
@@ -40,6 +41,17 @@ public class IngestionService {
             return files.map(p -> p.getFileName().toString())
                     .filter(name -> name.endsWith(".pdf"))
                     .toList();
+        }
+    }
+
+    public List<DocumentInfo> documentInfos() throws IOException {
+        List<DocumentInfo> result = new ArrayList<>();
+        try (var files = Files.list(Path.of(docsFolder))) {
+            for (Path pdf : files.filter(p -> p.toString().endsWith(".pdf")).toList()) {
+                int pages = pdfPageLoader.countPages(pdf);
+                result.add(new DocumentInfo(pdf.getFileName().toString(), pages));
+            }
+            return result;
         }
     }
 

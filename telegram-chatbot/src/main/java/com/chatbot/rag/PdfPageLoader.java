@@ -31,4 +31,10 @@ public class PdfPageLoader {
         }
         return pages;
     }
+
+    public int countPages(Path pdf) throws IOException {
+        try (PDDocument doc = PDDocument.load(pdf.toFile())) {
+            return doc.getNumberOfPages();
+        }
+    }
 }
