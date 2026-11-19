@@ -1,1 +1,23 @@
-<p>chat works!</p>
+<div class="flex flex-col gap-4 p-4 max-w-3xl mx-auto">
+  @for (msg of messages(); track $index) {
+    <div class="flex" [class.justify-end]="msg.role === 'user'">
+      <div class="rounded-b-xl px-4 py-2 max-w-[80%] whitespace-pre-line"
+           [class]="msg.role === 'user' ? 'bg-primary text-primary-contrast' : 'bg-surface-100'">
+        {{ msg.text }}
+        @if (msg.sources?.length) {
+          <p class="text-sm text-muted-color mt-1">Quellen: {{ msg.sources!.join('; ') }}</p>
+        }
+      </div>
+    </div>
+  } @empty {
+    <p class="text-muted-color">Stell eine Frage zu deinen Dokumenaten ...</p>
+  }
+  @if (error()) {
+    <p-message severity="error">{{ error() }}</p-message>
+  }
+  <div class="flex gap-2">
+  <textarea pTextarea [(ngModel)]="question" rows="2" class="flex-1" placeholder="Deine Frage..."
+            aria-label="Frage"></textarea>
+    <p-button label="Senden" [loading]="loading()" (onClick)="send()"/>
+  </div>
+</div>
