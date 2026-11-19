@@ -6,6 +6,7 @@ import {Message} from 'primeng/message';
 import {Textarea} from 'primeng/textarea';
 import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
+import {SourceChips} from '../source-chips/source-chips';
 
 interface Message {
   role: 'user' | 'bot';
@@ -18,7 +19,8 @@ interface Message {
     Message,
     Textarea,
     FormsModule,
-    Button
+    Button,
+    SourceChips
   ],
   selector: 'app-chat',
   styleUrl: './chat.scss',

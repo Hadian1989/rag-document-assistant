@@ -5,7 +5,7 @@
            [class]="msg.role === 'user' ? 'bg-primary text-primary-contrast' : 'bg-surface-100'">
         {{ msg.text }}
         @if (msg.sources?.length) {
-          <p class="text-sm text-muted-color mt-1">Quellen: {{ msg.sources!.join('; ') }}</p>
+          <app-source-chips [sources]="msg.sources!"/>
         }
       </div>
     </div>
