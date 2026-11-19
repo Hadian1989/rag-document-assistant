@@ -1,4 +1,10 @@
-<app-upload/>
-<app-chat/>
-<app-document-list />
-<router-outlet/>
+<div class="min-h-screen flex flex-col md:flex-row">
+  <aside class="md:w-80 shrink-0 p-4 flex-col gap-6 border-b md:border-b-0 md:border-r border-surface-200">
+    <h1 class="text-xl font-bold">📚 RAG-Assistent</h1>
+    <app-upload/>
+    <app-document-list/>
+  </aside>
+  <main class="flex-1 min-w-0 md:h-screen">
+    <app-chat/>
+  </main>
+</div>

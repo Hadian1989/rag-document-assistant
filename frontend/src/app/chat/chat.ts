@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {afterRenderEffect, Component, ElementRef, inject, signal, viewChild} from '@angular/core';
 import {RagApi} from '../core/rag-api';
 import {finalize} from 'rxjs';
 // @ts-ignore
@@ -28,10 +28,19 @@ interface Message {
 })
 export class Chat {
   private api = inject(RagApi);
+  private scroller = viewChild<ElementRef<HTMLElement>>('scroller');
   messages = signal<Message[]>([]);
   question = signal('');
   loading = signal(false);
   error = signal<string | null>(null);
+
+  constructor() {
+    afterRenderEffect(() => {
+      this.messages();
+      const el = this.scroller()?.nativeElement;
+      el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
+    })
+  }
 
   send() {
     const q = this.question().trim();
@@ -45,5 +54,10 @@ export class Chat {
         next: a => this.messages.update(m => [...m, {role: 'bot', text: a.answer, sources: a.sources}]),
         error: () => this.error.set('Die Antwort konnte nicht geladen werden.')
       });
+  }
+
+  onEnter(event: Event) {
+    event.preventDefault();   // kein Zeilenumbruch
+    this.send();
   }
 }
