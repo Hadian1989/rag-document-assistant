@@ -1,6 +1,12 @@
-<div class="min-h-screen flex flex-col md:flex-row">
-  <aside class="md:w-80 shrink-0 p-4 flex-col gap-6 border-b md:border-b-0 md:border-r border-surface-200">
-    <h1 class="text-xl font-bold">📚 RAG-Assistent</h1>
+<div class="min-h-screen flex flex-col md:flex-row bg-surface-0 dark:bg-surface-950 text-surface-900 dark:text-surface-0">
+  <aside
+    class="md:w-80 shrink-0 p-4 flex flex-col gap-6 border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-700">
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl font-bold">📚 RAG-Assistent</h1>
+      <p-button [text]="true" [rounded]="true" (onClick)="dark.set(!dark())"
+                [label]="dark() ? '☀️' : '🌙'" ariaLabel="Dark Mode umschalten"/>
+
+    </div>
     <app-upload/>
     <app-document-list/>
   </aside>
