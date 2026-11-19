@@ -9,9 +9,9 @@
     "frontend": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
+        "@schematics/angular:component": { "skipTests": true },
+        "@schematics/angular:service": { "skipTests": true },
+        "@schematics/angular:component": {"style": "scss" }
       },
       "root": "",
       "sourceRoot": "src",
