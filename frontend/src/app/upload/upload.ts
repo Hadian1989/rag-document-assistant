@@ -4,6 +4,7 @@ import {finalize} from 'rxjs';
 import {HttpEventType} from '@angular/common/http';
 import {ProgressBar} from 'primeng/progressbar';
 import {Message} from 'primeng/message';
+import {DocumentStore} from '../core/document-store';
 
 const MAX_MB = 20;
 
@@ -18,6 +19,7 @@ const MAX_MB = 20;
 })
 export class Upload {
   private api = inject(RagApi);
+  private store = inject(DocumentStore);
   progress = signal<number | null>(null);
   processing = signal(false);
   dragging = signal(false);
@@ -67,6 +69,7 @@ export class Upload {
           if (p === 100) this.processing.set(true);
         }
         if (event.type === HttpEventType.Response) {
+          this.store.reload();
           this.message.set({severity: 'success', text: `${file.name} hochgeladen`});
         }
       },

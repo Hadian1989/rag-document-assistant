@@ -1,0 +1,14 @@
+<h2 class="font-semibold mb-2">{{ store.count() }} Dokumente geladen</h2>
+
+@if (store.error()) {
+  <p-message severity="error">{{ store.error() }}</p-message>
+}
+
+<ul class="flex flex-col gap-1">
+  @for (doc of store.documents(); track doc.fileName) {
+    <li class="flex justify-between gap-2 text-sm">
+      <span class="truncate" [title]="doc.fileName">📄 {{ doc.fileName }}</span>
+      <span class="text-muted-color shrink-0">{{ doc.pages }} S.</span>
+    </li>
+  }
+</ul>
