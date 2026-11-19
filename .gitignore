@@ -36,5 +36,7 @@ build/
 **/docs/
 logs/
 **/roadmap/
+**/primeui-license.ts
+
 
 
