@@ -4,7 +4,7 @@ A full-stack app that answers questions about **your own PDF documents** and giv
 
 **Angular** (Signals, PrimeNG) ⇄ **Spring Boot** REST ⇄ **LangChain4j** ⇄ **pgvector**. The whole stack starts with one `docker compose up`.
 
-![Web UI demo](docs-assets/demo-web.gif)
+![Web UI demo](docs-assets/web-app.gif)
 
 **Example**
 
