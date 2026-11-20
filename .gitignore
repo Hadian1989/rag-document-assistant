@@ -4,6 +4,8 @@ telegram-chatbot/HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.env
+
 ### STS ###
 .apt_generated
 .classpath
@@ -35,5 +37,8 @@ build/
 **/.idea/
 **/docs/
 logs/
+**/roadmap/
+**/primeui-license.ts
+
 
 

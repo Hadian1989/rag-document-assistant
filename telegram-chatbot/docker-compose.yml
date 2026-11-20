@@ -10,5 +10,33 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: .
+    container_name: rag-backend
+    env_file: .env
+    environment:
+      RAG_DB_HOST: pgvector
+    volumes:
+      - ../docs:/app/docs
+    ports:
+      - "8090:8090"
+    depends_on:
+      pgvector:
+        condition: service_healthy
+
+  frontend:
+    build: ../frontend
+    container_name: rag-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:

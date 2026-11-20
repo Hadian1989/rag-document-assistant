@@ -1,8 +1,10 @@
-# RAG Document Assistant (Telegram Bot + REST API)
+# RAG Document Assistant (Angular Web UI + Telegram Bot + REST API)
 
-A Spring Boot app that answers questions about **your own PDF documents** and gives **the source (file and page)** for each answer. If the answer is not in the documents, it says so instead of making something up.
+A full-stack app that answers questions about **your own PDF documents** and gives **the source (file and page)** for each answer. If the answer is not in the documents, it says so instead of making something up.
 
-![Demo](docs-assets/demo.gif)
+**Angular** (Signals, PrimeNG) ⇄ **Spring Boot** REST ⇄ **LangChain4j** ⇄ **pgvector**. The whole stack starts with one `docker compose up`.
+
+![Web UI demo](docs-assets/web-app.gif)
 
 **Example**
 
@@ -14,6 +16,7 @@ A Spring Boot app that answers questions about **your own PDF documents** and gi
 
 ## Features
 
+- 🖥️ **Web UI (Angular)**: chat with source chips, PDF upload with drag & drop and a progress bar, a live document list, and dark mode
 - 📚 **RAG with sources**: PDFs are read page by page, split into chunks, embedded and stored in **pgvector**. Each answer lists the file and page it came from.
 - 🙅 **Honest refusal**: questions outside the documents get *"Das steht nicht in meinen Dokumenten."* ("That is not in my documents.")
 - 🧾 **Structured output**: `/fristen <topic>` extracts deadlines and dates as Java objects (`record Deadline(String title, LocalDate date)`), sorted in Java.
@@ -26,6 +29,10 @@ A Spring Boot app that answers questions about **your own PDF documents** and gi
 
 ```mermaid
 flowchart LR
+    subgraph Web["Web UI (Docker)"]
+        NG["Angular 22<br/>Signals + PrimeNG"] --> NX["nginx<br/>/api proxy"]
+    end
+
     subgraph Ingestion
         PDF["PDFs in docs/"] --> L["PdfPageLoader<br/>page by page"]
         UP["REST upload"] --> L
@@ -35,7 +42,7 @@ flowchart LR
     end
 
     subgraph Question
-        U["Telegram / REST"] --> RS["RagService"]
+        U["Telegram bot / REST API"] --> RS["RagService"]
         RS --> DA["DocAssistant<br/>LangChain4j AI Service"]
         DA --> R["ContentRetriever<br/>top 3 chunks"]
         R --> DB
@@ -43,11 +50,34 @@ flowchart LR
         LLM <--> T["DateTools<br/>@Tool"]
         LLM --> A["Answer + sources"]
     end
+
+    NX --> U
+    NX --> UP
 ```
 
 ## Tech Stack
 
-Java 17 · Spring Boot 3.3 · LangChain4j 0.34 · OpenAI (gpt-4o-mini, text-embedding-3-small) · PostgreSQL + pgvector · Apache PDFBox · Docker Compose · JUnit 5 · TelegramBots 6.9
+**Backend:** Java 17 · Spring Boot 3.3 · LangChain4j 0.34 · OpenAI (gpt-4o-mini, text-embedding-3-small) · PostgreSQL + pgvector · Apache PDFBox · JUnit 5 · TelegramBots 6.9
+
+**Frontend:** Angular 22 (standalone, Signals, zoneless) · NgRx Signals · PrimeNG 22 (Aura theme) · Tailwind CSS 4 · TypeScript
+
+**DevOps:** Docker Compose (pgvector, backend, nginx + frontend) · GitHub Actions
+
+## Frontend
+
+The web UI lives in [`frontend/`](frontend/).
+
+| Feature | How it works |
+|---|---|
+| Chat | `Chat` component. The state is plain signals (`messages`, `loading`, `error`). Enter sends, Shift+Enter adds a new line. `afterRenderEffect` scrolls to the newest message. |
+| Source chips | A small reusable component with a signal input (`input.required<string[]>()`) and PrimeNG `p-chip` |
+| PDF upload | Drag & drop or file picker. The progress comes from `HttpEventType.UploadProgress` (`reportProgress: true, observe: 'events'`). After 100 % it shows a "processing" state, because the backend still creates the embeddings. It checks for PDF only and max. 20 MB. |
+| Document list | An **NgRx `signalStore`** (`withState`, `withComputed`, `withMethods`, `withHooks`). The upload calls `store.reload()`, so the list updates by itself. |
+| API access | One typed service (`RagApi`) with `HttpClient`. In development, `proxy.conf.json` forwards `/api` to the backend, so no CORS is needed. |
+| Layout | Tailwind, mobile first: the sidebar sits above the chat on small screens. Dark mode toggle: PrimeNG and Tailwind both use the `.app-dark` class, and the choice is saved in `localStorage`. |
+| Accessibility | `aria-live="polite"` for new answers, labels on inputs, a keyboard-accessible file input (`sr-only` instead of `hidden`) |
+
+In Docker, **nginx** serves the built app and forwards `/api` to the backend container. It allows uploads up to 20 MB (`client_max_body_size`) and waits up to 5 minutes, because embedding a large PDF takes time.
 
 ## Evaluation
 
@@ -75,19 +105,22 @@ The eval set has 20 questions: 16 whose answer is in the documents and 4 whose a
 
 ### 1. Prerequisites
 
-- Java 17+
 - Docker Desktop
 - An OpenAI API key
 - A Telegram bot token from [@BotFather](https://t.me/BotFather)
+- A **PrimeUI license key**. PrimeNG 21+ is not MIT anymore; the [Community License](https://primeui.dev/licenses/community) is free for individuals, students and small teams. Without a key the app still works, but it shows an "Invalid PrimeUI License" banner.
+- Only for local development: Java 17+ and Node.js 22+
 
-### 2. Start the database
+### 2. Configuration
 
-```bash
-cd telegram-chatbot
-docker compose up -d
+Create `telegram-chatbot/.env` (it is in `.gitignore`, so it never ends up on GitHub):
+
 ```
-
-### 3. Set environment variables
+OPENAI_API_KEY=sk-...
+TELEGRAM_BOT_NAME=...
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_ADMIN_CHAT_ID=...
+```
 
 | Variable | Description |
 |---|---|
@@ -95,21 +128,54 @@ docker compose up -d
 | `TELEGRAM_BOT_NAME` | Bot username |
 | `TELEGRAM_BOT_TOKEN` | Bot token from BotFather |
 | `TELEGRAM_ADMIN_CHAT_ID` | Your Telegram chat ID (only this chat may use `/reindex`) |
-| `RAG_DOCSFOLDER` | Optional. Path to the PDF folder (`rag.docs-folder`). Use `../docs` when you start the app from `telegram-chatbot/` |
+| `RAG_DOCSFOLDER` | Optional. Path to the PDF folder (`rag.docs-folder`). Use `../docs` when you start the backend from `telegram-chatbot/` without Docker |
 
-### 4. Add documents and run
+Create `frontend/src/app/primeui-license.ts` (also in `.gitignore`):
+
+```ts
+export const PRIMEUI_LICENSE = 'your-license-key';
+```
 
 Put your PDFs into `docs/`. The PDFs need real text; scanned PDFs without a text layer do not work.
 
+### 3. Run everything with Docker
+
 ```bash
-./mvnw spring-boot:run
+cd telegram-chatbot
+docker compose up -d --build
 ```
 
-The app starts on **http://localhost:8090**. To load the PDFs, send `/reindex` in Telegram, or start the app once with `rag.ingest-on-startup=true`.
+| Container | Port | |
+|---|---|---|
+| `rag-frontend` | **http://localhost:4200** | nginx with the Angular app |
+| `rag-backend` | http://localhost:8090 | Spring Boot (`docs/` is mounted into the container) |
+| `rag-db` | 5432 | PostgreSQL + pgvector, with a healthcheck so the backend waits for it |
+
+To load the PDFs from `docs/` into the database, send `/reindex` in Telegram, or add `RAG_INGEST_ON_STARTUP=true` to `.env` for the first start. PDFs uploaded in the web UI are indexed right away.
+
+### 4. Local development (optional)
+
+```bash
+cd telegram-chatbot
+docker compose up -d pgvector          # only the database
+./mvnw spring-boot:run                 # backend on :8090 (set the variables from .env)
+
+cd ../frontend
+npm install
+npm start                              # http://localhost:4200, /api is proxied to :8090
+```
+
+> Do not run the backend in Docker and locally at the same time: both use port 8090 and the same Telegram token.
 
 ## Usage
 
+### Web UI
+
+Open **http://localhost:4200**, drop a PDF into the upload area, and ask a question. The sources appear as chips under each answer.
+
 ### Telegram commands
+
+![Telegram demo](docs-assets/demo.gif)
 
 | Command | Description |
 |---|---|
@@ -152,7 +218,10 @@ The eval calls the real OpenAI API, so it has the tag `@Tag("eval")` and is not 
 
 ## CI
 
-GitHub Actions runs `./mvnw test` on every push, with a pgvector service container. The eval tests are excluded there (`excludedGroups=eval` in `pom.xml`).
+GitHub Actions runs two jobs in parallel on every pull request:
+
+- **build** (backend): `./mvnw test` with a pgvector service container. The eval tests are excluded there (`excludedGroups=eval` in `pom.xml`).
+- **frontend**: `npm ci` and `npm run build`. The PrimeUI license file is created from the GitHub Secret `PRIMEUI_LICENSE`, so the key is never in the repository.
 
 ## Configuration
 
@@ -171,6 +240,9 @@ rag.min-score=0.6
 - 🖼️ **No OCR**: scanned PDFs cannot be read.
 - 📋 **Tables**: a table that is split across chunks can lead to mixed-up answers (see Evaluation).
 - 🧪 **Simple eval check**: answers are checked with keyword matching. Short numbers like `"20"` can match by accident (for example inside `2026`).
+- 📝 **Markdown is shown as plain text**: the LLM sometimes answers with `**bold**` or lists, and the web UI does not render Markdown yet.
+- 🧩 **No automated frontend tests**: the frontend is checked by the TypeScript compiler and the production build in CI, but there are no unit or E2E tests.
+- 🔑 **PrimeUI license**: you need your own (free) PrimeUI key to build the frontend without the license banner.
 
 ## What I Learned
 
@@ -179,3 +251,19 @@ rag.min-score=0.6
 - **Measure, don't guess.** The eval confirmed that chunk size 1000 is the best choice, and it showed that `maxResults` 3 is as good as 5 but cheaper. I could not have seen that by testing a few questions by hand.
 - **The LLM only knows what you tell it.** It did not know today's date (fixed with `{{current_date}}`), and it misread a negative tool result until I explained it in the `@Tool` description.
 - **Debug with logs.** Request logging showed me whether the right chunks reached the LLM. That told me whether a wrong answer came from retrieval or from generation.
+- **Signals are functions.** `documents.length` compiled without errors but was always `0`, because it is the length of the signal *function*. The correct form is `documents().length`.
+- **Uploads have more limits than you think.** Spring allows 20 MB, but nginx allows only 1 MB by default (`client_max_body_size`), and its 60-second timeout is too short for embedding a 380-page PDF.
+- **Keep secrets out of git, and keep CI working anyway.** `.env` and the license file are ignored; the CI creates the license file from a GitHub Secret. A file that is already staged is *not* ignored, so I had to remove it with `git rm --cached`.
+- **Check licenses before you add a dependency.** PrimeNG changed from MIT to its own license with version 21. I only noticed it because of the banner in the UI.
+
+## How I Used AI
+
+I built the frontend with **Claude Code** as a tutor and reviewer, not as a code generator:
+
+- **Roadmap first.** I followed a step-by-step roadmap (setup → API service → chat → upload → store → UX → Docker → CI) and worked through it in small steps, with one commit per step.
+- **I wrote the code myself.** For each step, Claude explained the concept (for example Signals, HTTP upload events, `signalStore`), and then I implemented it.
+- **AI as a reviewer.** After each step, Claude read my diff, ran the TypeScript compiler and the build, and pointed out bugs: a decorator placed above a `const` instead of the class, a wrong upload URL that would only fail at runtime, `documents.length` on a signal, and YAML indentation errors in `docker-compose.yml` and the CI workflow.
+- **Debugging together.** It read logs and system state to find causes: `ECONNREFUSED` (backend not running), port 8090 already in use, IntelliJ no longer recognizing the Maven module, and a full C: drive (Docker's disk image).
+- **Verifying the AI.** The AI also made mistakes. For example, it recommended PrimeNG without checking the license first. I only found this because I tested in the real app and saw the license banner, so I always check suggestions myself.
+
+My takeaway: AI makes me much faster at learning a new stack, but I still have to understand every line and test the result myself.

@@ -1,6 +1,7 @@
 package com.chatbot.controller;
 
 import com.chatbot.controller.dto.QuestionDto;
+import com.chatbot.rag.DocumentInfo;
 import com.chatbot.rag.IngestionService;
 import com.chatbot.rag.RagAnswer;
 import com.chatbot.rag.RagService;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -40,5 +43,15 @@ public class RagController {
             return ResponseEntity.badRequest().body("Fehler beim Import!");
         }
 
+    }
+
+    @GetMapping("/documents")
+    public List<DocumentInfo> getDocuments() {
+        try {
+            return ingestionService.documentInfos();
+        } catch (IOException e) {
+            log.error("Dokumente nicht lesbar: ", e);
+            throw new UncheckedIOException("docs Ordner nicht lesbar", e);
+        }
     }
 }
