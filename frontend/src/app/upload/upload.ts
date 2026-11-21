@@ -5,13 +5,16 @@ import {HttpEventType} from '@angular/common/http';
 import {ProgressBar} from 'primeng/progressbar';
 import {Message} from 'primeng/message';
 import {DocumentStore} from '../core/document-store';
+import {MessageService} from 'primeng/api';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 
 const MAX_MB = 20;
 
 @Component({
   imports: [
     ProgressBar,
-    Message
+    Message,
+    TranslatePipe
   ],
   selector: 'app-upload',
   styleUrl: './upload.scss',
@@ -20,10 +23,13 @@ const MAX_MB = 20;
 export class Upload {
   private api = inject(RagApi);
   private store = inject(DocumentStore);
+  private toast = inject(MessageService);
+  private translate = inject(TranslateService);
   progress = signal<number | null>(null);
   processing = signal(false);
   dragging = signal(false);
-  message = signal<{ severity: 'success' | 'error'; text: string } | null>(null)
+  // Store the translation key (not the text), so the message follows a language switch
+  message = signal<{ severity: 'success' | 'error'; key: string; params?: Record<string, unknown> } | null>(null);
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -49,11 +55,13 @@ export class Upload {
   private uploadFile(file: File) {
     if (this.progress() !== null) return;
     if (file.type !== 'application/pdf') {
-      this.message.set({severity: 'error', text: 'Nur PDF-Dateien erlaubt.'});
+      this.message.set({severity: 'error', key: 'UPLOAD.ONLY_PDF'});
+      this.showToast('warn', 'UPLOAD.WRONG_TYPE_TITLE', 'UPLOAD.ONLY_PDF');
       return;
     }
     if (file.size > MAX_MB * 1024 * 1024) {
-      this.message.set({severity: 'error', text: `Maximal ${MAX_MB} MB.`});
+      this.message.set({severity: 'error', key: 'UPLOAD.TOO_BIG', params: {max: MAX_MB}});
+      this.showToast('warn', 'UPLOAD.TOO_BIG_TITLE', 'UPLOAD.TOO_BIG', {max: MAX_MB});
       return;
     }
     this.message.set(null);
@@ -70,10 +78,27 @@ export class Upload {
         }
         if (event.type === HttpEventType.Response) {
           this.store.reload();
-          this.message.set({severity: 'success', text: `${file.name} hochgeladen`});
+          this.message.set({severity: 'success', key: 'UPLOAD.SUCCESS', params: {name: file.name}});
+          this.toast.add({
+            severity: 'success',
+            summary: this.translate.instant('UPLOAD.SUCCESS_TITLE'),
+            detail: file.name,
+          });
         }
       },
-      error: () => this.message.set({severity: 'error', text: 'Upload fehlgeschlagen.'})
+      error: () => {
+        this.message.set({severity: 'error', key: 'UPLOAD.FAILED'});
+        this.showToast('error', 'UPLOAD.FAILED_TITLE', 'UPLOAD.RETRY');
+      }
+    })
+  }
+
+  // A toast is only visible for a few seconds, so translating it once with instant() is enough
+  private showToast(severity: 'warn' | 'error', summaryKey: string, detailKey: string, params?: Record<string, unknown>) {
+    this.toast.add({
+      severity,
+      summary: this.translate.instant(summaryKey),
+      detail: this.translate.instant(detailKey, params),
     });
   }
 }

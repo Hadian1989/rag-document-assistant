@@ -22,7 +22,7 @@ export const DocumentStore = signalStore(
       patchState(store, {loading: true, error: null});
       api.documents().subscribe({
         next: documents => patchState(store, {documents, loading: false}),
-        error: () => patchState(store, {loading: false, error: 'Dokumente konnten nicht geladen werden.'}),
+        error: () => patchState(store, {loading: false, error: 'DOCS.LOAD_ERROR'}),
       });
     },
   })),

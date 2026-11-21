@@ -4,8 +4,9 @@ import {finalize} from 'rxjs';
 import {Message} from 'primeng/message';
 import {Textarea} from 'primeng/textarea';
 import {FormsModule} from '@angular/forms';
-import {Button} from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import {SourceChips} from '../source-chips/source-chips';
+import {TranslatePipe} from '@ngx-translate/core';
 
 interface ChatMessage {
   role: 'user' | 'bot';
@@ -18,8 +19,9 @@ interface ChatMessage {
     Message,
     Textarea,
     FormsModule,
-    Button,
-    SourceChips
+    SourceChips,
+    ButtonDirective,
+    TranslatePipe
   ],
   selector: 'app-chat',
   styleUrl: './chat.scss',
@@ -51,7 +53,7 @@ export class Chat {
     this.api.ask(q).pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: a => this.messages.update(m => [...m, {role: 'bot', text: a.answer, sources: a.sources}]),
-        error: () => this.error.set('Die Antwort konnte nicht geladen werden.')
+        error: () => this.error.set('CHAT.ERROR')
       });
   }
 

@@ -11,16 +11,22 @@
         </div>
       </div>
     } @empty {
-      <p class="text-muted-color">Stell eine Frage zu deinen Dokumenten ...</p>
+      <p class="text-muted-color">{{ 'CHAT.EMPTY' | translate }}</p>
     }
     @if (error()) {
-      <p-message severity="error">{{ error() }}</p-message>
+      <p-message severity="error">{{ error()! | translate }}</p-message>
     }
   </div>
 
   <div class="flex gap-2">
-  <textarea pTextarea (keydown.enter)="onEnter($event)" [(ngModel)]="question" rows="2" class="flex-1" placeholder="Deine Frage..."
-            aria-label="Frage"></textarea>
-    <p-button label="Senden" [loading]="loading()" (onClick)="send()"/>
+  <textarea pTextarea (keydown.enter)="onEnter($event)" [(ngModel)]="question" rows="2" class="flex-1"
+            [placeholder]="'CHAT.PLACEHOLDER' | translate"
+            [attr.aria-label]="'CHAT.QUESTION_LABEL' | translate"></textarea>
+    <button pButton [disabled]="loading()" (click)="send()">
+      @if (loading()) {
+        <span class="size-4 rounded-full border-2 border-current border-t-transparent animate-spin"></span>
+      }
+      {{ 'CHAT.SEND' | translate }}
+    </button>
   </div>
 </div>
