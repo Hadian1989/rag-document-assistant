@@ -1,0 +1,33 @@
+{
+  "APP": {
+    "TITLE": "RAG-Assistent",
+    "SWITCH_LANG": "Sprache wechseln",
+    "TOGGLE_DARK": "Dark Mode umschalten"
+  },
+  "CHAT": {
+    "SEND": "Senden",
+    "PLACEHOLDER": "Deine Frage …",
+    "QUESTION_LABEL": "Frage",
+    "EMPTY": "Stell eine Frage zu deinen Dokumenten …",
+    "ERROR": "Die Antwort konnte nicht geladen werden."
+  },
+  "UPLOAD": {
+    "DROP": "PDF hierher ziehen",
+    "OR_CLICK": "oder klicken zum Auswählen",
+    "PROCESSING": "Wird verarbeitet …",
+    "SUCCESS": "{{name}} hochgeladen",
+    "SUCCESS_TITLE": "Hochgeladen",
+    "ONLY_PDF": "Nur PDF-Dateien erlaubt.",
+    "WRONG_TYPE_TITLE": "Falscher Dateityp",
+    "TOO_BIG": "Maximal {{max}} MB.",
+    "TOO_BIG_TITLE": "Datei zu groß",
+    "FAILED": "Upload fehlgeschlagen.",
+    "FAILED_TITLE": "Upload fehlgeschlagen",
+    "RETRY": "Bitte versuch es noch einmal."
+  },
+  "DOCS": {
+    "LOADED": "{{count}} Dokumente geladen",
+    "PAGES": "{{count}} S.",
+    "LOAD_ERROR": "Dokumente konnten nicht geladen werden."
+  }
+}

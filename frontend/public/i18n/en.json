@@ -1,0 +1,33 @@
+{
+  "APP": {
+    "TITLE": "RAG Assistant",
+    "SWITCH_LANG": "Switch language",
+    "TOGGLE_DARK": "Toggle dark mode"
+  },
+  "CHAT": {
+    "SEND": "Send",
+    "PLACEHOLDER": "Your question …",
+    "QUESTION_LABEL": "Question",
+    "EMPTY": "Ask a question about your documents …",
+    "ERROR": "The answer could not be loaded."
+  },
+  "UPLOAD": {
+    "DROP": "Drop a PDF here",
+    "OR_CLICK": "or click to choose a file",
+    "PROCESSING": "Processing …",
+    "SUCCESS": "{{name}} uploaded",
+    "SUCCESS_TITLE": "Uploaded",
+    "ONLY_PDF": "Only PDF files are allowed.",
+    "WRONG_TYPE_TITLE": "Wrong file type",
+    "TOO_BIG": "Maximum {{max}} MB.",
+    "TOO_BIG_TITLE": "File too large",
+    "FAILED": "Upload failed.",
+    "FAILED_TITLE": "Upload failed",
+    "RETRY": "Please try again."
+  },
+  "DOCS": {
+    "LOADED": "{{count}} documents loaded",
+    "PAGES": "{{count}} p.",
+    "LOAD_ERROR": "Documents could not be loaded."
+  }
+}
