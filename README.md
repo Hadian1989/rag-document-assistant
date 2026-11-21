@@ -16,7 +16,7 @@ A full-stack app that answers questions about **your own PDF documents** and giv
 
 ## Features
 
-- 🖥️ **Web UI (Angular)**: chat with source chips, PDF upload with drag & drop and a progress bar, a live document list, and dark mode
+- 🖥️ **Web UI (Angular)**: chat with source chips, PDF upload with drag & drop and a progress bar, a live document list, toast notifications, German/English, and dark mode
 - 📚 **RAG with sources**: PDFs are read page by page, split into chunks, embedded and stored in **pgvector**. Each answer lists the file and page it came from.
 - 🙅 **Honest refusal**: questions outside the documents get *"Das steht nicht in meinen Dokumenten."* ("That is not in my documents.")
 - 🧾 **Structured output**: `/fristen <topic>` extracts deadlines and dates as Java objects (`record Deadline(String title, LocalDate date)`), sorted in Java.
@@ -59,7 +59,7 @@ flowchart LR
 
 **Backend:** Java 17 · Spring Boot 3.3 · LangChain4j 0.34 · OpenAI (gpt-4o-mini, text-embedding-3-small) · PostgreSQL + pgvector · Apache PDFBox · JUnit 5 · TelegramBots 6.9
 
-**Frontend:** Angular 22 (standalone, Signals, zoneless) · NgRx Signals · PrimeNG 22 (Aura theme) · Tailwind CSS 4 · TypeScript
+**Frontend:** Angular 22 (standalone, Signals, zoneless) · NgRx Signals · PrimeNG 22 (Aura theme) · ngx-translate 18 · Tailwind CSS 4 · TypeScript
 
 **DevOps:** Docker Compose (pgvector, backend, nginx + frontend) · GitHub Actions
 
@@ -75,7 +75,9 @@ The web UI lives in [`frontend/`](frontend/).
 | Document list | An **NgRx `signalStore`** (`withState`, `withComputed`, `withMethods`, `withHooks`). The upload calls `store.reload()`, so the list updates by itself. |
 | API access | One typed service (`RagApi`) with `HttpClient`. In development, `proxy.conf.json` forwards `/api` to the backend, so no CORS is needed. |
 | Layout | Tailwind, mobile first: the sidebar sits above the chat on small screens. Dark mode toggle: PrimeNG and Tailwind both use the `.app-dark` class, and the choice is saved in `localStorage`. |
-| Accessibility | `aria-live="polite"` for new answers, labels on inputs, a keyboard-accessible file input (`sr-only` instead of `hidden`) |
+| Notifications | PrimeNG **Toast** with a global `MessageService` (one `<p-toast>` in the app shell). The upload shows a toast for success, errors and invalid files, and also keeps an inline `p-message` under the drop zone. |
+| Languages (DE/EN) | **ngx-translate** with JSON files in `public/i18n/` (uppercase keys like `UPLOAD.TOO_BIG`, with parameters like `{{max}}`). The language switch works at runtime: a `lang` signal calls `translate.use()`, saves the choice in `localStorage` and sets `<html lang>`. The first language comes from the browser. Messages that stay on screen keep the translation **key** in a signal and are translated in the template, so they change with the language. Short-lived toasts use `translate.instant()`. |
+| Accessibility | `aria-live="polite"` for new answers, translated labels on inputs and icon buttons, a keyboard-accessible file input (`sr-only` instead of `hidden`), and the `lang` attribute follows the selected language |
 
 In Docker, **nginx** serves the built app and forwards `/api` to the backend container. It allows uploads up to 20 MB (`client_max_body_size`) and waits up to 5 minutes, because embedding a large PDF takes time.
 
@@ -255,6 +257,7 @@ rag.min-score=0.6
 - 📋 **Tables**: a table that is split across chunks can lead to mixed-up answers (see Evaluation).
 - 🧪 **Simple eval check**: answers are checked with keyword matching. Short numbers like `"20"` can match by accident (for example inside `2026`).
 - 📝 **Markdown is shown as plain text**: the LLM sometimes answers with `**bold**` or lists, and the web UI does not render Markdown yet.
+- 🌐 **Answers are always in German**: the language switch translates the UI, but the backend does not get the selected language yet, so the LLM always answers in German.
 - 🧩 **No automated frontend tests**: the frontend is checked by the TypeScript compiler and the production build in CI, but there are no unit or E2E tests.
 - 🔑 **PrimeUI license**: you need your own (free) PrimeUI key to build the frontend without the license banner.
 
