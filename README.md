@@ -130,11 +130,25 @@ TELEGRAM_ADMIN_CHAT_ID=...
 | `TELEGRAM_ADMIN_CHAT_ID` | Your Telegram chat ID (only this chat may use `/reindex`) |
 | `RAG_DOCSFOLDER` | Optional. Path to the PDF folder (`rag.docs-folder`). Use `../docs` when you start the backend from `telegram-chatbot/` without Docker |
 
-Create `frontend/src/app/primeui-license.ts` (also in `.gitignore`):
+Copy the license template. **The frontend does not build without this file**:
+
+```bash
+# macOS / Linux / Git Bash
+cp frontend/src/app/primeui-license.example.ts frontend/src/app/primeui-license.ts
+```
+
+```powershell
+# Windows PowerShell
+Copy-Item frontend/src/app/primeui-license.example.ts frontend/src/app/primeui-license.ts
+```
+
+Then put your key into `primeui-license.ts` (it is in `.gitignore`):
 
 ```ts
 export const PRIMEUI_LICENSE = 'your-license-key';
 ```
+
+If you leave the key empty (`''`), the app still builds and runs, but PrimeNG shows an "Invalid PrimeUI License" banner.
 
 Put your PDFs into `docs/`. The PDFs need real text; scanned PDFs without a text layer do not work.
 

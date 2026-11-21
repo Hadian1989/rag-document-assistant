@@ -73,7 +73,7 @@ export class Upload {
           this.message.set({severity: 'success', text: `${file.name} hochgeladen`});
         }
       },
-      error: () => this.message.set({severity: 'error', text: 'Upload fehlgeschlafen.'})
+      error: () => this.message.set({severity: 'error', text: 'Upload fehlgeschlagen.'})
     });
   }
 }

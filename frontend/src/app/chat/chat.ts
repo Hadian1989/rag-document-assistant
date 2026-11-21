@@ -1,14 +1,13 @@
 import {afterRenderEffect, Component, ElementRef, inject, signal, viewChild} from '@angular/core';
 import {RagApi} from '../core/rag-api';
 import {finalize} from 'rxjs';
-// @ts-ignore
 import {Message} from 'primeng/message';
 import {Textarea} from 'primeng/textarea';
 import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {SourceChips} from '../source-chips/source-chips';
 
-interface Message {
+interface ChatMessage {
   role: 'user' | 'bot';
   text: string;
   sources?: string[];
@@ -29,7 +28,7 @@ interface Message {
 export class Chat {
   private api = inject(RagApi);
   private scroller = viewChild<ElementRef<HTMLElement>>('scroller');
-  messages = signal<Message[]>([]);
+  messages = signal<ChatMessage[]>([]);
   question = signal('');
   loading = signal(false);
   error = signal<string | null>(null);
