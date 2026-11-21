@@ -2,10 +2,10 @@ import {Component, effect, signal} from '@angular/core';
 import {Chat} from './chat/chat';
 import {Upload} from './upload/upload';
 import {DocumentList} from './document-list/document-list';
-import {Button} from 'primeng/button';
+import { ButtonDirective} from 'primeng/button';
 
 @Component({
-  imports: [Chat, Upload, DocumentList, Button],
+  imports: [Chat, Upload, DocumentList, ButtonDirective],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

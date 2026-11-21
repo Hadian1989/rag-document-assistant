@@ -4,7 +4,7 @@ import {finalize} from 'rxjs';
 import {Message} from 'primeng/message';
 import {Textarea} from 'primeng/textarea';
 import {FormsModule} from '@angular/forms';
-import {Button} from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import {SourceChips} from '../source-chips/source-chips';
 
 interface ChatMessage {
@@ -18,8 +18,8 @@ interface ChatMessage {
     Message,
     Textarea,
     FormsModule,
-    Button,
-    SourceChips
+    SourceChips,
+    ButtonDirective
   ],
   selector: 'app-chat',
   styleUrl: './chat.scss',

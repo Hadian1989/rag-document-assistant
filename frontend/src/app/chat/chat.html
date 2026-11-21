@@ -19,8 +19,14 @@
   </div>
 
   <div class="flex gap-2">
-  <textarea pTextarea (keydown.enter)="onEnter($event)" [(ngModel)]="question" rows="2" class="flex-1" placeholder="Deine Frage..."
+  <textarea pTextarea (keydown.enter)="onEnter($event)" [(ngModel)]="question" rows="2" class="flex-1"
+            placeholder="Deine Frage..."
             aria-label="Frage"></textarea>
-    <p-button label="Senden" [loading]="loading()" (onClick)="send()"/>
+    <button pButton [disabled]="loading()" (click)="send()">
+      @if (loading()) {
+        <span class="size-4 rounded-full border-2 border-current border-t-transparent animate-spin"></span>
+      }
+      Senden
+    </button>
   </div>
 </div>
