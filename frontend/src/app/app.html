@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between">
       <h1 class="text-xl font-bold">📚 RAG-Assistent</h1>
       <button pButton [text]="true" [rounded]="true" (click)="dark.set(!dark())"
-              ariaLabel="Dark Mode umschalten">
+              aria-label="Dark Mode umschalten">
         {{ dark() ? '☀️' : '🌙' }}
       </button>
 
@@ -17,3 +17,4 @@
     <app-chat/>
   </main>
 </div>
+<p-toast position="top-right" />

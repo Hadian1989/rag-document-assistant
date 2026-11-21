@@ -3,9 +3,10 @@ import {Chat} from './chat/chat';
 import {Upload} from './upload/upload';
 import {DocumentList} from './document-list/document-list';
 import { ButtonDirective} from 'primeng/button';
+import {Toast} from 'primeng/toast';
 
 @Component({
-  imports: [Chat, Upload, DocumentList, ButtonDirective],
+  imports: [Chat, Upload, DocumentList, ButtonDirective, Toast],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

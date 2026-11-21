@@ -5,6 +5,7 @@ import {HttpEventType} from '@angular/common/http';
 import {ProgressBar} from 'primeng/progressbar';
 import {Message} from 'primeng/message';
 import {DocumentStore} from '../core/document-store';
+import {MessageService} from 'primeng/api';
 
 const MAX_MB = 20;
 
@@ -20,6 +21,7 @@ const MAX_MB = 20;
 export class Upload {
   private api = inject(RagApi);
   private store = inject(DocumentStore);
+  private toast = inject(MessageService);
   progress = signal<number | null>(null);
   processing = signal(false);
   dragging = signal(false);
@@ -50,6 +52,7 @@ export class Upload {
     if (this.progress() !== null) return;
     if (file.type !== 'application/pdf') {
       this.message.set({severity: 'error', text: 'Nur PDF-Dateien erlaubt.'});
+      this.toast.add({severity: 'warn', summary: 'Falscher Dateityp', detail: 'Nur PDF-Dateien erlaubt.'});
       return;
     }
     if (file.size > MAX_MB * 1024 * 1024) {
@@ -71,9 +74,13 @@ export class Upload {
         if (event.type === HttpEventType.Response) {
           this.store.reload();
           this.message.set({severity: 'success', text: `${file.name} hochgeladen`});
+          this.toast.add({severity: 'success', summary: 'Hochgeladen', detail: file.name});
         }
       },
-      error: () => this.message.set({severity: 'error', text: 'Upload fehlgeschlagen.'})
-    });
+      error: () => {
+        this.message.set({severity: 'error', text: 'Upload fehlgeschlagen.'});
+        this.toast.add({severity: 'error', summary: 'Upload fehlgeschlagen', detail: 'Bitte versuch es noch einmal.'});
+      }
+    })
   }
 }
